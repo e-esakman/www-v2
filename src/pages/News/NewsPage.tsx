@@ -61,6 +61,19 @@ const NewsPage: React.FC = () => {
     return params.get('q') || '';
   });
 
+  useEffect(() => {
+    const catPath =
+      activeCategory === 'All'
+        ? 'all'
+        : activeCategory.toLowerCase().replace(/\s+/g, '-');
+
+    const query = searchTerm ? `?q=${encodeURIComponent(searchTerm)}` : '';
+
+    const newUrl = `/news/${catPath}${query}`;
+
+    window.history.replaceState(null, '', newUrl);
+  }, [searchTerm, activeCategory]);
+
   const setViewMode = (newMode: 'grid' | 'list' | 'magazine') => {
     setViewModeState(newMode);
 
@@ -111,7 +124,6 @@ const NewsPage: React.FC = () => {
     const params = new URLSearchParams(location.search);
     const q = params.get('q') || '';
     setSearchTerm(q);
-    setCurrentPage(1);
   }, [location.search]);
 
   useEffect(() => {
@@ -294,16 +306,7 @@ const NewsPage: React.FC = () => {
                       placeholder="Search articles, topics, or categories..."
                       value={searchTerm}
                       onChange={(e) => {
-                        const value = e.target.value;
-                        setSearchTerm(value);
-                        const catPath =
-                          activeCategory === 'All'
-                            ? 'all'
-                            : activeCategory.toLowerCase().replace(/\s+/g, '-');
-                        const query = value
-                          ? `?q=${encodeURIComponent(value)}`
-                          : '';
-                        navigate(`/news/${catPath}${query}`, { replace: true });
+                        setSearchTerm(e.target.value);
                       }}
                       className="w-full pl-10 pr-4 py-3 border border-gray-200 dark:bg-gray-700 dark:border-gray-600 dark:text-white rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
                     />
@@ -317,7 +320,10 @@ const NewsPage: React.FC = () => {
                               : activeCategory
                                   .toLowerCase()
                                   .replace(/\s+/g, '-');
-                          navigate(`/news/${catPath}`, { replace: true });
+                          navigate(`/news/${catPath}`, {
+                            replace: true,
+                            preventScrollReset: true,
+                          });
                         }}
                         className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
                         aria-label="Clear search"
@@ -436,7 +442,10 @@ const NewsPage: React.FC = () => {
                         activeCategory === 'All'
                           ? 'all'
                           : activeCategory.toLowerCase().replace(/\s+/g, '-');
-                      navigate(`/news/${catPath}`, { replace: true });
+                      navigate(`/news/${catPath}`, {
+                        replace: true,
+                        preventScrollReset: true,
+                      });
                     }}
                     className="text-blue-600 hover:text-blue-700 underline text-sm"
                   >
